@@ -11,12 +11,10 @@ const Koa = require('koa');
 const Router = require('koa-router');
 
 const koa = new Koa();
-const {router , allowedMethods} = require('./routes');
-
-
+const {routes , allowedMethods} = require('./routes');
 
 koa
-  .use(router())
+  .use(routes())
   .use(allowedMethods());
 
 const server = koa.listen(PORT);

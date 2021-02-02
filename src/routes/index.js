@@ -1,4 +1,5 @@
 const Router = require('koa-router');
+const PORT = process.env.PORT || 3000;
 
 const router = new Router();
 //rota simples pra testar se o servidor está online
