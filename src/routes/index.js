@@ -1,18 +1,17 @@
 const Router = require('koa-router');
 const PORT = process.env.PORT || 3000;
-
+const { listUser, createUser, updateUser, deleteUser} =  require('../controller/UserController')
+const models = require('../models')
 const router = new Router();
-//rota simples pra testar se o servidor está online
-router.get('/', async (ctx) => {
-  ctx.body = `Seu servidor esta rodando em http://localhost:${PORT}`; //http://localhost:3000/
-});
+const KoaBody = require('koa-body')
+//routes for user
+router
+  .get('/users', listUser)
+  .post('/user', KoaBody(), createUser )
+  .put('/user/:id', KoaBody(), updateUser)
+  .delete('/user/:id', deleteUser);
 
-//Uma rota de exemplo simples aqui.
-//As rotas devem ficar em arquivos separados, /src/controllers/userController.js por exemplo
-router.get('/users', async (ctx) => {
-    ctx.status = 200;
-    ctx.body = {total:0, count: 0, rows:[]}
-});
+
 
 module.exports = {
   routes(){return router.routes()},
