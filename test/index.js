@@ -129,9 +129,9 @@ describe('Testes da aplicaçao',  () => {
         .get('/user/naoExiste')
         .end(function (err, res) {
             console.log(err)
-            expect(err.response.body.error).to.be.equal('User not found'); //possivelmente forma errada de verificar a mensagem de erro
+            expect(err).to.be.null; //possivelmente forma errada de verificar a mensagem de erro
             expect(res).to.have.status(404);
-            expect(res.body).to.be.jsonSchema(userSchema);
+            expect(res.body.error).to.be.equal("User not found");
             done();
         });
     });
