@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
-    "test": "mocha"
+    "migrate" : "npx sequelize-cli db:migrate",
+    "pretest": "cross-env NODE_ENV=test npm run migrate",
+    "test": "cross-env NODE_ENV=test mocha --bail"
   },
   "repository": {
     "type": "git",

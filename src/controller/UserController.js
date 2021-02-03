@@ -5,7 +5,7 @@ const Joi = require('joi');
 //Define user validation parameter for requests
 const userSchema = Joi.object().keys({
   nome: Joi.string().trim().required(),
-  idade: Joi.number().required(),
+  idade: Joi.number().min(18).required(),
   email: Joi.string().trim().email().required()
 });
 
@@ -19,13 +19,14 @@ module.exports.listUser = async function listUser(ctx,next){
   const limit = ctx.query.size || 10;
   const offset = ( ctx.query.pages * ctx.query.size) || 0;
   //return all users
-  ctx.body = await models.User.findAndCountAll({
+  const { count: total, rows} = await models.User.findAndCountAll({
     offset,
     limit,
     attributes:
       { exclude: ['updatedAt','createdAt'] }
     },
-    );
+  );
+  ctx.body =  { rows, total}
   await next();
 }
 
@@ -52,13 +53,13 @@ module.exports.updateUser = async function updateUser(ctx, next){
   var params = updateUserSchema.validate(ctx.request.body);
   if(params.error){
     ctx.status = 400;
-    ctx.body = params.error.details.map(det => ({message: det.message}));
+    ctx.body = params.error.details.map(det => ({error: det.message}));
     await next();
     return;
   }
   if(!ctx.request.body){
     ctx.status = 400;
-    ctx.body = { message: "Empty body request" }
+    ctx.body = { error: "Empty body request" }
     await next();
     return;
   }
@@ -69,7 +70,7 @@ module.exports.updateUser = async function updateUser(ctx, next){
   });
   if(!user){
     ctx.status = 404;
-    ctx.body = { message: "User not found"};
+    ctx.body = { error: "User not found"};
   }
   await models.User.update(ctx.request.body,{
     where: {
@@ -93,19 +94,23 @@ module.exports.deleteUser = async function deleteUser(ctx, next){
   //Verify if exists user
   const user = await models.User.findOne({
     where: {
-      id: ctx.params.id
+      nome: ctx.params.nome
+    },
+    attributes: {
+      exclude: [ 'createdAt' , 'updatedAt']
     }
   })
   if(!user){
     //if not exixts return not accepted
     ctx.status = 406;
-    ctx.body = { message: 'User not found'}
+    ctx.body = { error: 'User not found'}
     await next();
     return;
   }
   //if exists delete him
   await user.destroy();
-  ctx.status = 204;
+  ctx.status = 200;
+  ctx.body = user;
   await next();
 }
 
@@ -121,7 +126,7 @@ module.exports.userByName = async function userByName(ctx, next) {
   });
   if(!user){
     ctx.status = 404;
-    ctx.body = { error: "User not found" };
+    ctx.body = { message : "User not found" };
     await next();
     return;
   }

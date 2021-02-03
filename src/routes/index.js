@@ -10,7 +10,7 @@ router
   .get('/user/:nome', userByName)
   .post('/user', KoaBody(), createUser )
   .put('/user/:id', KoaBody(), updateUser)
-  .delete('/user/:id', deleteUser);
+  .delete('/user/:nome', deleteUser);
 
 router.get('/', async (ctx, next) => {
   try {

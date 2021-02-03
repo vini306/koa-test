@@ -20,6 +20,8 @@ chai.use(chaiJson);
 
 const expect = chai.expect;
 
+const path = require('path');
+const fs = require('fs');
 //Define o minimo de campos que o usuário deve ter. Geralmente deve ser colocado em um arquivo separado
 const userSchema = {
     title: "Schema do Usuario, define como é o usuario, linha 24 do teste",
@@ -82,43 +84,80 @@ describe('Testes da aplicaçao',  () => {
             done();
         });
     });
-    it('deveria criar o usuario raupp', function (done) {
+
+    it('deveria criar o usuario bruno', function (done) {
       chai.request(app)
       .post('/user')
-      .send({nome: "raupp", email: "jose.raupp@devoz.com.br", idade: 35})
+      .send({nome: "bruno", email: "bruno@devoz.com.br", idade: 20})
       .end(function (err, res) {
           expect(err).to.be.null;
           expect(res).to.have.status(201);
           done();
       });
     });
-    it('deveria criar o usuario raupp', function (done) {
+
+    it('deveria criar o usuario daniel', function (done) {
       chai.request(app)
       .post('/user')
-      .send({nome: "raupp", email: "jose.raupp@devoz.com.br", idade: 35})
+      .send({nome: "daniel", email: "daniel@devoz.com.br", idade: 44})
       .end(function (err, res) {
           expect(err).to.be.null;
           expect(res).to.have.status(201);
           done();
     });
     });
-    it('deveria criar o usuario raupp', function (done) {
+
+    it('deveria criar o usuario vinicius', function (done) {
       chai.request(app)
       .post('/user')
-      .send({nome: "raupp", email: "jose.raupp@devoz.com.br", idade: 35})
+      .send({nome: "vinicius", email: "vinicius@devoz.com.br", idade: 24})
       .end(function (err, res) {
           expect(err).to.be.null;
           expect(res).to.have.status(201);
           done();
       });
     });
-    it('deveria criar o usuario raupp', function (done) {
+
+    it('deveria criar o usuario maria', function (done) {
       chai.request(app)
       .post('/user')
-      .send({nome: "raupp", email: "jose.raupp@devoz.com.br", idade: 35})
+      .send({nome: "maria", email: "maria@devoz.com.br", idade: 18})
       .end(function (err, res) {
           expect(err).to.be.null;
           expect(res).to.have.status(201);
+          done();
+      });
+    });
+
+    it('deveria criar o usuario matheus', function (done) {
+      chai.request(app)
+      .post('/user')
+      .send({nome: "matheus", email: "matheus@devoz.com.br", idade: 27})
+      .end(function (err, res) {
+          expect(err).to.be.null;
+          expect(res).to.have.status(201);
+          done();
+      });
+    });
+
+    it('não deveria criar o usuario marcela', function (done) {
+      chai.request(app)
+      .post('/user')
+      .send({nome: "marcela", email: "marcela@devoz.com.br", idade: 15})
+      .end(function (err, res) {
+          expect(err).to.be.null;
+          expect(res).to.have.status(400);
+          done();
+      });
+    });
+
+    it('não deveria criar o usuario carlos', function (done) {
+      chai.request(app)
+      .post('/user')
+      .send({nome: "carlos", email: "carlos@devoz.com.br", idade: 12})
+      .end(function (err, res) {
+          expect(err).to.be.null;
+          expect(res).to.have.status(400);
           done();
       });
     });
@@ -128,10 +167,9 @@ describe('Testes da aplicaçao',  () => {
         chai.request(app)
         .get('/user/naoExiste')
         .end(function (err, res) {
-            console.log(err)
             expect(err).to.be.null; //possivelmente forma errada de verificar a mensagem de erro
             expect(res).to.have.status(404);
-            expect(res.body.error).to.be.equal("User not found");
+            expect(res.body.message).to.be.equal("User not found");
             done();
         });
     });
@@ -163,20 +201,35 @@ describe('Testes da aplicaçao',  () => {
         .get('/user/raupp')
         .end(function (err, res) {
             expect(err).to.be.null;
-            expect(res).to.have.status(200);
-            expect(res.body).to.be.jsonSchema(userSchema);
+            expect(res).to.have.status(404);
+            expect(res.body.message).to.be.equal("User not found");
             done();
         });
     });
 
-    it('deveria ser uma lista com pelomenos 5 usuarios', function (done) {
+    it('deveria ser uma lista com pelo menos 5 usuarios', function (done) {
         chai.request(app)
         .get('/users')
         .end(function (err, res) {
-        expect(err).to.be.null;
-        expect(res).to.have.status(200);
-        expect(res.body.total).to.be.at.least(5);
-        done();
+          expect(err).to.be.null;
+          expect(res).to.have.status(200);
+          expect(res.body.total).to.be.at.least(5);
+          done();
         });
     });
+
+    it('deleta o banco', async function (done) {
+        dropDatabase();
+        done();
+    })
+
+
 })
+
+
+async function dropDatabase(){
+  await models.sequelize.close();
+  fs.unlink(path.resolve(__dirname, 'database.sqlite3'), function (err){
+    console.log(err)
+  })
+}
