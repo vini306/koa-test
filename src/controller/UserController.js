@@ -5,22 +5,27 @@ const Joi = require('joi');
 //Define user validation parameter for requests
 const userSchema = Joi.object().keys({
   nome: Joi.string().trim().required(),
-  idade: Joi.number(),
+  idade: Joi.number().required(),
   email: Joi.string().trim().email().required()
 });
 
 const updateUserSchema = Joi.object().keys({
   nome: Joi.string().trim(),
-  idade: Joi.number(),
+  idade: Joi.number().required(),
   email: Joi.string().trim().email()
 });
 //Service for retrive all user
 module.exports.listUser = async function listUser(ctx,next){
+  const limit = ctx.query.size || 10;
+  const offset = ( ctx.query.pages * ctx.query.size) || 0;
   //return all users
-  ctx.body = await models.User.findAll({
+  ctx.body = await models.User.findAndCountAll({
+    offset,
+    limit,
     attributes:
       { exclude: ['updatedAt','createdAt'] }
-    });
+    },
+    );
   await next();
 }
 
@@ -37,7 +42,7 @@ module.exports.createUser = async function createUser(ctx,next){
     return;
   }
   //create user
-  ctx.body = await models.User.create(ctx.request.body);
+  await models.User.create(ctx.request.body);
   ctx.status = 201;
   await next();
 }
@@ -104,3 +109,22 @@ module.exports.deleteUser = async function deleteUser(ctx, next){
   await next();
 }
 
+//This function get a user by name
+module.exports.userByName = async function userByName(ctx, next) {
+  const user = await models.User.findOne({
+    where: {
+      nome: ctx.params.nome
+    },
+    attributes: {
+      exclude: [  'createdAt' , 'updatedAt' ]
+    }
+  });
+  if(!user){
+    ctx.status = 404;
+    ctx.body = { error: "User not found" };
+    await next();
+    return;
+  }
+  ctx.body = user;
+  await next();
+}
