@@ -11,7 +11,7 @@ const userSchema = Joi.object().keys({
 
 const updateUserSchema = Joi.object().keys({
   nome: Joi.string().trim(),
-  idade: Joi.number().required(),
+  idade: Joi.number(),
   email: Joi.string().trim().email()
 });
 //Service for retrive all user
@@ -76,7 +76,6 @@ module.exports.updateUser = async function updateUser(ctx, next){
     where: {
       id: ctx.params.id
     },
-    returning: true
   });
   ctx.body = await models.User.findOne({
     where: {
@@ -102,7 +101,7 @@ module.exports.deleteUser = async function deleteUser(ctx, next){
   })
   if(!user){
     //if not exixts return not accepted
-    ctx.status = 406;
+    ctx.status = 404;
     ctx.body = { error: 'User not found'}
     await next();
     return;

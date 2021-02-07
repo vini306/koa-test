@@ -196,15 +196,27 @@ describe('Testes da aplicaçao',  () => {
         });
     });
 
+    it('deveria atualizar maria', function (done) {
+      chai.request(app)
+      .put('/user/5')
+      .send({ nome:  "Maria", email: "maria@maria.com.br"})
+      .end(function (err, res) {
+        expect(err).to.be.null;
+        expect(res).to.have.status(200);
+        expect(res.body).have.includes({ nome:  "Maria", email: "maria@maria.com.br"})
+        done();
+      })
+    });
+
     it('o usuario raupp não deve existir mais no sistema', function (done) {
-        chai.request(app)
-        .get('/user/raupp')
-        .end(function (err, res) {
-            expect(err).to.be.null;
-            expect(res).to.have.status(404);
-            expect(res.body.message).to.be.equal("User not found");
-            done();
-        });
+      chai.request(app)
+      .get('/user/raupp')
+      .end(function (err, res) {
+          expect(err).to.be.null;
+          expect(res).to.have.status(404);
+          expect(res.body.message).to.be.equal("User not found");
+          done();
+      });
     });
 
     it('deveria ser uma lista com pelo menos 5 usuarios', function (done) {
