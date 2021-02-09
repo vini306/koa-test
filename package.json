@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "cross-env NODE_ENV=development nodemon src/index.js",
-    "migrate" : "npx sequelize-cli db:migrate",
+    "migrate": "npx sequelize-cli db:migrate",
     "pretest": "cross-env NODE_ENV=test npm run migrate",
     "test": "cross-env NODE_ENV=test mocha --bail"
   },
@@ -28,8 +28,11 @@
     "koa": "^2.13.0",
     "koa-body": "^4.2.0",
     "koa-router": "^9.4.0",
+    "koa2-swagger-ui": "^5.0.5",
     "sequelize": "^6.5.0",
-    "sqlite3": "^5.0.1"
+    "sqlite3": "^5.0.1",
+    "swagger-ui-express": "^4.1.6",
+    "yamljs": "^0.3.0"
   },
   "devDependencies": {
     "chai": "^4.2.0",

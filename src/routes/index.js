@@ -3,7 +3,8 @@ const PORT = process.env.PORT || 3000;
 const { listUser, createUser, updateUser, deleteUser, userByName} =  require('../controller/UserController')
 const models = require('../models')
 const router = new Router();
-const KoaBody = require('koa-body')
+const KoaBody = require('koa-body');
+
 //routes for user
 router
   .get('/users', listUser)

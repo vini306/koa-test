@@ -1,0 +1,144 @@
+swagger:  "2.0"
+info:
+  description: "Api para cadastro de usuários"
+  version: "1.0.0"
+  title: "Api usuários"
+  
+  contact:
+    email: "viniciussantos306@gmail.com"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+tags:
+- name: "Usuário"
+  description: "Rotas sobre usuário"
+
+schemes: 
+- "http"
+paths:
+  /user/{nome}:
+    get:
+      tags:
+      - "Usuário"
+      summary: "Obtem um usuário pelo nome"
+      description: ""
+      operationId: "getUserByName"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "nome"
+        in: "path"
+        description: "Nome do usuário"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Success operation"
+          schema: 
+            $ref: "#/definitions/Usuario"
+        "404":
+           description: "User not found"
+    delete:
+      tags:
+      - "Usuário"
+      summary: "Deleta um usuário"
+      operationId: "deleteUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "nome"
+        in: "path"
+        description: "Nome do usuário"
+        required: true
+        type: "string"
+      responses:
+        "200":
+          description: "Success operation"
+          schema: 
+            $ref: "#/definitions/Usuario"
+        "404":
+           description: "User not found"
+    put:
+      tags:
+      - "Usuário"
+      summary: "Atualiza um usuário"
+      operationId: "updateUser"
+      produces:
+      - "application/json"
+      parameters:
+      - name: "nome"
+        in: "path"
+        description: "Nome do usuário"
+        required: true
+        type: "string"
+      - in: "body"
+        name: "body"
+        description: "List of user object"
+        required: true
+        schema:
+          $ref: "#/definitions/Usuario"
+      responses:
+        "201":
+          description: "Success operation"
+          schema: 
+            $ref: "#/definitions/Usuario"
+        "404":
+          description: "User not found"
+        "400":
+          description: "Invalid body parameters"
+          
+  /user:
+    post:
+      tags:
+      - "Usuário"
+      summary: "Criar um usuário"
+      operationId: "createUser"
+      produces:
+      - "application/json"
+      responses:
+        "200":
+          description: "Success operation"
+          schema: 
+            $ref: "#/definitions/Usuario"
+        "404":
+           description: "User not found"
+        "400":
+          description: "Invalid body parameters"
+  /users:
+    get:
+      tags:
+      - "Usuário"
+      summary: "Retorna todos usuários"
+      operationId: "getUsers"
+      produces:
+      - "application/json"
+      responses:
+        "202":
+          description: "Success operation"
+          schema:
+            type: "array"
+            items:
+              $ref: "#/definitions/ListUsuarios"
+        
+definitions:
+  Usuario:
+    type: "object"
+    properties:
+      nome:
+        type: "string"
+      idade:
+        type: "integer"
+      email: 
+        type: "string"
+    xml:
+      name: "Usuário"
+  ListUsuarios:
+    type: "object"
+    properties:
+      rows:
+        type: "array"
+        items:
+          $ref: "#/definitions/Usuario"
+      total:
+        type: "integer"
+  
